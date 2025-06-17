@@ -57,11 +57,13 @@ useEffect(() => {
 
   return (
     <header className="bg-gradient-to-r from-green-800 to-green-600 text-white shadow-md fixed top-0 left-0 right-0 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-5">
         <div className="flex items-center gap-2">
-          <div className="bg-white text-xl rounded-full w-10 h-10 flex items-center justify-center">
-            🔥
+
+          <div className="w-12 h-12 rounded-full overflow-hidden">
+            <img src="/img/logo.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
+          
           <span className="text-lg font-bold">Igreja do Avivamento</span>
         </div>
 
