@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -6,16 +7,39 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState(null); // para controle dos submenus mobile
 
+  const [hoveredMenu, setHoveredMenu] = useState(null);
+
+  const menuRef = useRef();
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleSubmenu = (label) => {
     setOpenSubmenu((prev) => (prev === label ? null : label));
   };
 
   const navItems = [
-    { label: "Início", href: "#" },
+    { label: "Início", href: "/" },
     {
       label: "Liderança",
-      dropdown: ["Presidente", "Vice-Presidente", "Conselho", "Pastores"],
+    dropdown: [
+      { label: "Presidente", href: "/lideranca/presidente" },
+      { label: "Vice-Presidente", href: "/lideranca/vice-presidente" },
+      { label: "Conselho", href: "/lideranca/conselho" },
+      { label: "Pastores", href: "/lideranca/pastores" }
+    ],
     },
     {
       label: "Sobre Nós",
@@ -44,7 +68,12 @@ export default function Navbar() {
         {/* Menu desktop */}
         <nav className="hidden md:flex gap-6 items-center">
           {navItems.map((item) => (
-            <div key={item.label} className="relative group">
+            <div
+              key={item.label}
+              className="relative"
+              onMouseEnter={() => setHoveredMenu(item.label)}
+              onMouseLeave={() => setHoveredMenu(null)}
+            >
               <a
                 href={item.href || "#"}
                 className="hover:bg-white hover:text-green-800 transition px-3 py-2 rounded-md font-medium flex items-center gap-1"
@@ -53,14 +82,18 @@ export default function Navbar() {
                 {item.dropdown && <span className="text-xs">▼</span>}
               </a>
               {item.dropdown && (
-                <div className="absolute hidden group-hover:flex flex-col bg-white text-green-800 rounded shadow-lg mt-2 w-44">
+                <div
+                  className={`absolute ${
+                    hoveredMenu === item.label ? "visible opacity-100" : "invisible opacity-0"
+                  } flex flex-col bg-white text-green-800 rounded shadow-lg mt-2 w-44 transition-all duration-200 z-50`}
+                >
                   {item.dropdown.map((sub, idx) => (
                     <a
                       key={idx}
-                      href="#"
+                      href={sub.href || "#"}
                       className="px-4 py-2 hover:bg-gray-100"
                     >
-                      {sub}
+                      {sub.label || sub}
                     </a>
                   ))}
                 </div>
@@ -84,6 +117,8 @@ export default function Navbar() {
           </div>
         </nav>
 
+
+
         {/* Botão menu mobile */}
         <button onClick={toggleMenu} className="md:hidden">
           {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -94,12 +129,13 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.nav
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 w-64 h-full bg-white text-green-800 z-50 shadow-lg p-6 flex flex-col justify-between gap-4 md:hidden overflow-y-auto max-h-screen"
-          >
+              ref={menuRef}
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="fixed top-0 right-0 w-64 h-full bg-white text-green-800 z-50 shadow-lg p-6 flex flex-col justify-between gap-4 md:hidden overflow-y-auto max-h-screen"
+            >
             <div className="flex flex-col gap-4">
               {navItems.map((item) => (
                 <div key={item.label}>
