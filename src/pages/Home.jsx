@@ -1,6 +1,9 @@
 import HeroBanner from "../components/HeroBanner";
 import Agenda from "../components/Agenda";
 import EventsHighlight from "../components/EventsHighlight";
+import Noticias from "../components/Noticias";
+import VideoInstitucional from "../components/VideoInstitucional";
+import Doacoes from "../components/Doacoes";
 
 export default function Home() {
   return (
@@ -14,8 +17,14 @@ export default function Home() {
       <div className="grid md:grid-cols-2 gap-10">
         <Agenda />
         <EventsHighlight />
+        
       </div>
     </section>
+
+    <Noticias />
+    <VideoInstitucional />
+    <Doacoes />
+
 
   </>
 );
