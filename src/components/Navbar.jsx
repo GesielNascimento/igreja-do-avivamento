@@ -1,49 +1,155 @@
 import { useState } from "react";
+import { Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState(null); // para controle dos submenus mobile
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleSubmenu = (label) => {
+    setOpenSubmenu((prev) => (prev === label ? null : label));
+  };
+
+  const navItems = [
+    { label: "Início", href: "#" },
+    {
+      label: "Liderança",
+      dropdown: ["Presidente", "Vice-Presidente", "Conselho", "Pastores"],
+    },
+    {
+      label: "Sobre Nós",
+      dropdown: ["Quem Somos", "Nossa Missão", "Nossa Visão", "Valores"],
+    },
+    {
+      label: "Localização",
+      dropdown: ["Onde Estamos", "Congregações", "Contato"],
+    },
+    {
+      label: "Ministérios",
+      dropdown: ["Mocidade", "Geração Teen", "Kids"],
+    },
+  ];
 
   return (
-    <nav className="bg-gradient-to-r from-green-700 to-green-500 shadow-lg fixed w-full top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo + Nome */}
-          <div className="flex items-center gap-3">
-            <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center text-xl">
-              🔥
-            </div>
-            <span className="text-white text-lg font-bold drop-shadow">Igreja do Avivamento</span>
+    <header className="bg-gradient-to-r from-green-800 to-green-600 text-white shadow-md fixed top-0 left-0 right-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+        <div className="flex items-center gap-2">
+          <div className="bg-white text-xl rounded-full w-10 h-10 flex items-center justify-center">
+            🔥
           </div>
-
-          {/* Menu Desktop */}
-          <div className="hidden md:flex space-x-6">
-            <a href="#" className="text-white hover:underline">Início</a>
-            <a href="#" className="text-white hover:underline">Ministérios</a>
-            <a href="#" className="text-white hover:underline">Agenda</a>
-            <a href="#" className="text-white hover:underline">Contato</a>
-          </div>
-
-          {/* Botão Mobile */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-white focus:outline-none"
-            >
-              ☰
-            </button>
-          </div>
+          <span className="text-lg font-bold">Igreja do Avivamento</span>
         </div>
+
+        {/* Menu desktop */}
+        <nav className="hidden md:flex gap-6 items-center">
+          {navItems.map((item) => (
+            <div key={item.label} className="relative group">
+              <a
+                href={item.href || "#"}
+                className="hover:bg-white hover:text-green-800 transition px-3 py-2 rounded-md font-medium flex items-center gap-1"
+              >
+                {item.label}
+                {item.dropdown && <span className="text-xs">▼</span>}
+              </a>
+              {item.dropdown && (
+                <div className="absolute hidden group-hover:flex flex-col bg-white text-green-800 rounded shadow-lg mt-2 w-44">
+                  {item.dropdown.map((sub, idx) => (
+                    <a
+                      key={idx}
+                      href="#"
+                      className="px-4 py-2 hover:bg-gray-100"
+                    >
+                      {sub}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          <div className="flex gap-2 ml-4">
+            <a
+              href="#"
+              className="border border-white px-4 py-1.5 rounded-full hover:bg-white hover:text-green-800 transition"
+            >
+              Login
+            </a>
+            <a
+              href="#"
+              className="bg-white text-green-800 px-4 py-1.5 rounded-full hover:bg-gray-100 transition"
+            >
+              Cadastre-se
+            </a>
+          </div>
+        </nav>
+
+        {/* Botão menu mobile */}
+        <button onClick={toggleMenu} className="md:hidden">
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
       </div>
 
-      {/* Menu Mobile */}
-      {isOpen && (
-        <div className="md:hidden bg-green-600 px-4 pb-4">
-          <a href="#" className="block text-white py-2">Início</a>
-          <a href="#" className="block text-white py-2">Ministérios</a>
-          <a href="#" className="block text-white py-2">Agenda</a>
-          <a href="#" className="block text-white py-2">Contato</a>
-        </div>
-      )}
-    </nav>
+      {/* Menu lateral mobile */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.nav
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed top-0 right-0 w-64 h-full bg-white text-green-800 z-50 shadow-lg p-6 flex flex-col justify-between gap-4 md:hidden overflow-y-auto max-h-screen"
+          >
+            <div className="flex flex-col gap-4">
+              {navItems.map((item) => (
+                <div key={item.label}>
+                  <div
+                    className="flex justify-between items-center font-semibold text-lg cursor-pointer"
+                    onClick={() =>
+                      item.dropdown && toggleSubmenu(item.label)
+                    }
+                  >
+                    <span>{item.label}</span>
+                    {item.dropdown && (
+                      <span className="text-sm">
+                        {openSubmenu === item.label ? "▲" : "▼"}
+                      </span>
+                    )}
+                  </div>
+                  {item.dropdown && openSubmenu === item.label && (
+                    <div className="ml-4 mt-2 flex flex-col gap-2">
+                      {item.dropdown.map((sub, idx) => (
+                        <a
+                          key={idx}
+                          href="#"
+                          className="hover:text-green-600"
+                        >
+                          {sub}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-auto pt-6 pb-8 flex flex-col gap-3">
+              <a
+                href="#"
+                className="border border-green-800 px-4 py-2 rounded-full text-center hover:bg-green-800 hover:text-white transition"
+              >
+                Login
+              </a>
+              <a
+                href="#"
+                className="bg-green-800 text-white px-4 py-2 rounded-full text-center hover:bg-green-900 transition"
+              >
+                Cadastre-se
+              </a>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </header>
   );
 }
