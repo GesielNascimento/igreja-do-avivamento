@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { href, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { label } from "framer-motion/client";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,17 +43,30 @@ useEffect(() => {
     ],
     },
     {
-      label: "Sobre Nós",
-      dropdown: ["Quem Somos", "Nossa Missão", "Nossa Visão", "Valores"],
-    },
+  label: "Sobre Nós",
+  dropdown: [
+    { label: "Quem Somos", href: "/sobre-nos/quem-somos" },
+    { label: "Nossa Missão", href: "/sobre-nos/nossa-missao" },
+    { label: "Nossa Visão", href: "/sobre-nos/nossa-visao" },
+    { label: "Valores", href: "/sobre-nos/valores" }
+  ]
+},
     {
-      label: "Localização",
-      dropdown: ["Onde Estamos", "Congregações", "Contato"],
-    },
+  label: "Localização",
+  dropdown: [
+    { label: "Onde Estamos", href: "/localizacao/onde-estamos" },
+    { label: "Congregações", href: "/localizacao/congregacoes" },
+    { label: "Contato", href: "/localizacao/contato" }
+  ]
+},
     {
       label: "Ministérios",
-      dropdown: ["Mocidade", "Geração Teen", "Kids"],
-    },
+      dropdown: [
+        { label: "Mocidade", href: "/ministerios/mocidade" },
+        { label: "Geração Teen", href: "/ministerios/geracao-teen" },
+        { label: "Kids", href: "/ministerios/kids" }
+      ],
+    }
   ];
 
   return (
@@ -63,7 +77,7 @@ useEffect(() => {
           <div className="w-12 h-12 rounded-full overflow-hidden">
             <img src="/img/logo.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
-          
+
           <span className="text-lg font-bold">Igreja do Avivamento</span>
         </div>
 
